@@ -59,4 +59,5 @@ class AuthController extends AbstractController
         }
         
     }
+
 }
