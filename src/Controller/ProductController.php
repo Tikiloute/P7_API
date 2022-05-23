@@ -24,7 +24,6 @@ class ProductController extends AbstractController
         $products = $productRepository->findAll();
         $jsonContent = $serializer->serialize($products, 'json');
 
-        
             return $this->json([
                 'message' => 'Intégralité des produits',
                 'products' => $jsonContent,
