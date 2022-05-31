@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -17,12 +18,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private $login;
 
+    #[Assert\NotBlank()]
+    #[Assert\Email()]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    private $username;
+
+   
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
+
+    #[Assert\NotBlank()]
+    // #[Assert\Length(min: 8)] à vérifier
     #[ORM\Column(type: 'string')]
     private $password;
 
@@ -39,14 +47,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getLogin(): ?string
+    public function getUsername(): ?string
     {
-        return $this->login;
+        return $this->username;
     }
 
-    public function setLogin(string $login): self
+    public function setUsername(string $username): self
     {
-        $this->login = $login;
+        $this->username = $username;
 
         return $this;
     }
@@ -58,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->login;
+        return (string) $this->username;
     }
 
     /**
