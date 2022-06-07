@@ -16,14 +16,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AuthController extends AbstractController
 {
-    #[Route('/auth', name: 'app_auth')]
-    public function index(): Response
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/AuthController.php',
-        ]);
-    }
 
     #[Route('/auth/register', name: 'register', methods: ['POST'])]
     public function register(
@@ -59,12 +51,4 @@ class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/api/users', name: 'get_users', methods: ['GET'])]
-    public function users(
-        UserRepository $userRepository
-    ): JsonResponse {
-
-        return $this->json($userRepository->findAll());
-
-    }
 }
