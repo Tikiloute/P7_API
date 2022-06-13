@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
 {
-    #[Route('/product', name: 'products', methods:['GET'])]
+    #[Route('/api/products', name: 'products', methods:['GET'])]
     public function getProducts(
         ProductRepository $productRepository,
         SerializerInterface $serializer,
@@ -31,7 +32,7 @@ class ProductController extends AbstractController
             ]);
     }
 
-    #[Route('/product/{id}', name: 'product', methods:['GET'])]
+    #[Route('/api/products/{id}', name: 'product', methods:['GET'])]
     public function getProduct(
         Product $product,
         SerializerInterface $serializer
@@ -39,52 +40,39 @@ class ProductController extends AbstractController
     {
 
         $jsonContent = $serializer->serialize($product, 'json');
-
+        dd($jsonContent);
         return $this->json([
-            'message' => 'Intégralité des produits',
             'products' => $jsonContent,
-            'path' => 'src/Controller/ProductController.php',
         ]);
     }
 
-    #[Route('/product/add', name: 'addProduct', methods:['POST'])]
+    #[Route('/api/products/add', name: 'addProduct', methods:['POST'])]
     public function addProduct(
         Request $request,
         EntityManagerInterface $em,
-        ProductRepository $productRepository
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
     ): JsonResponse
     {
+        $product =  $serializer->deserialize(
+            $request->getContent(),
+            Product::class,
+            'json'
+        );
 
-        $data = json_decode($request->getContent());
-        $name = $data->name;
-        $description = $data->description;
-        $price = $data->price;
-        $stock = $data->stock;
-        $product = new Product();
-        $product->setName($name);
-        $product->setPrice($price);
-        $product->setDescription($description);
-        $product->setStock($stock);
-        $response = new Response();
-        $productExist = $productRepository->findOneBy(['name' => $name]);
+        $errors = $validator->validate($product);
 
-        if($response->getStatusCode() === 200 && $productExist === null){
-
-            $em->persist($product);
-            $em->flush();
-
-            return $this->json([
-                'message' => 'Produit crée avec le status :'.$response->getStatusCode(),
-                'code' => $response->getStatusCode(),
-                'path' => 'src/Controller/AuthController.php',
-            ]);
-        } else {
-            return $this->json([
-                'message' => 'Problème de création de produit  status :'.$response->getStatusCode(),
-                'code' => $response->getStatusCode(),
-                'path' => 'src/Controller/AuthController.php',
-           ]);
+        if (count($errors) > 0) {
+           
+            $errorsString = (string) $errors;
+    
+            return $this->json($errorsString, 400);
         }
+
+        $em->persist($product);
+        $em->flush();
+
+        return $this->json($product, Response::HTTP_CREATED);
     }
 
 
