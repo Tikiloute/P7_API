@@ -12,6 +12,7 @@
         "doctrine/orm": "^2.12",
         "firebase/php-jwt": "^6.2",
         "lexik/jwt-authentication-bundle": "^2.15",
+        "sensio/framework-extra-bundle": "^6.2",
         "symfony/console": "6.0.*",
         "symfony/dotenv": "6.0.*",
         "symfony/flex": "^2",

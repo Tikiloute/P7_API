@@ -25,11 +25,7 @@ class ProductController extends AbstractController
         $products = $productRepository->findAll();
         $jsonContent = $serializer->serialize($products, 'json');
 
-            return $this->json([
-                'message' => 'Intégralité des produits',
-                'products' => $jsonContent,
-                'path' => 'src/Controller/ProductController.php',
-            ]);
+            return $this->json($products, Response::HTTP_OK);
     }
 
     #[Route('/api/products/{id}', name: 'product', methods:['GET'])]
@@ -40,10 +36,8 @@ class ProductController extends AbstractController
     {
 
         $jsonContent = $serializer->serialize($product, 'json');
-        dd($jsonContent);
-        return $this->json([
-            'products' => $jsonContent,
-        ]);
+        
+        return $this->json($product, Response::HTTP_OK);
     }
 
     #[Route('/api/products/add', name: 'addProduct', methods:['POST'])]
