@@ -23,6 +23,7 @@ class ProductController extends AbstractController
     ): JsonResponse
     {
         $products = $productRepository->findAll();
+        
         $jsonContent = $serializer->serialize($products, 'json');
 
             return $this->json($products, Response::HTTP_OK);

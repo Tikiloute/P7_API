@@ -47,7 +47,7 @@ class AuthController extends AbstractController
         $em->flush();
         
         return $this->json([
-            'message' => 'Compte crée'
+            'message' => 'Compte crée', Response::HTTP_CREATED
         ]);
     }
 
